@@ -31,3 +31,13 @@ shapefiledic={}
 shapefiledic['NAMEOFHISTORICREGION1'] = shapeone
 shapefiledic['NAMEOFHISTORICREGION2'] = shapetwo
 ```
+The key, which is chosen for the shapefiles will be used to produce a query of the hole shapefile.
+
+## Third:
+Import the Region_maker class and create an Object as followed. DESTINATIONFOLDER is the folder, where the queries are stored. FOLDEROFPLACENAMEDB is the folder, where the place name db is stored. NUMBEROFCORES are the number subprocesses, which are to be parallely started. Note, that the spatial join needs a lot of memory. 
+
+```
+from make_region import Region_maker
+Region_maker(shapefiledic,DESTINATIONFOLDER,FOLDEROFPLACENAMEDB,NUMBEROFCORES)
+```
+
