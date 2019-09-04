@@ -17,9 +17,9 @@
   "new": true,
   "setgold": true,
   "setmetaphone": false,
-  "folderres": "ergebnissegis-GenDB/",
-  "foldermulti": "unsichereergebnissegis-GenDB/",
-  "foldernores": "ohne-GenDB/",
+  "folderres": "results/",
+  "foldermulti": "uncertains/",
+  "foldernores": "nores/",
   "folderfscore": "fscore/",
   "num_cores" : 4,
   "table_region_name":"staat_oder_region",
@@ -34,7 +34,7 @@
     "Passau",
     "Niederbayern;OBEROESTERREICH;SALZBURG"
   ],
-  "folderregions": "regionenOrtsdb/",
+  "folderregions": "regionsplacenamedb/",
   "noplaces": [
     "26.0",
     "102.0",
