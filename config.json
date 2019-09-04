@@ -1,0 +1,52 @@
+{
+  "problempaare": {
+    "gg": "k",
+    "ck": "gg",
+    "dt": "t",
+    "th": "t",
+    "unter": "",
+    "ober": "",
+    "klein": "",
+    "gross": "",
+    "gro\u00df": "",
+    "ai": "ei",
+    "ae": "\u00e4",
+    "oe": "\u00f6",
+    "ue": "\u00fc"
+  },
+  "new": true,
+  "setgold": true,
+  "setmetaphone": false,
+  "folderres": "ergebnissegis-GenDB/",
+  "foldermulti": "unsichereergebnissegis-GenDB/",
+  "foldernores": "ohne-GenDB/",
+  "folderfscore": "fscore/",
+  "num_cores" : 4,
+  "table_region_name":"staat_oder_region",
+  "table_region_name_assigned":"staat_oder_region",
+  "table_place_name_org":"ort",
+  "table_place_country_code":"code",
+  "table_place_count":"count",
+  "table_place_name_cleaned":"OrtBereinigt",
+  "search_layers":["Deutsches_Reich","Niederbayern;OBEROESTERREICH;SALZBURG","Passau"],
+  "goldstandard_region_name_assigned":"staat_oder_region",
+  "neighborhood": [
+    "Passau",
+    "Niederbayern;OBEROESTERREICH;SALZBURG"
+  ],
+  "folderregions": "regionenOrtsdb/",
+  "noplaces": [
+    "26.0",
+    "102.0",
+    "118.0",
+    "245.0",
+    "111.0",
+    "64.0",
+    "87.0",
+    "object_190317",
+    "244.0",
+    "89.0",
+    "115.0",
+    "67.0"
+  ]
+}
