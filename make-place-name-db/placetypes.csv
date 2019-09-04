@@ -1,0 +1,286 @@
+code	ortart	zusatz	id	Kodierung	
+0	Amt	Verwaltung	1.0		
+1	Amtsbezirk	None	2.0		
+2	Amtsgericht	None	3.0		
+3	Bauerschaft	None	4.0	Einöde	
+4	Bezirk	None	5.0	Land	
+5	Bistum	None	6.0	Land	
+6	Bundesland	None	7.0	Land	
+7	Burg	None	8.0		
+8	Dekanat	None	9.0	Land	
+9	Departement	None	10.0	Land	
+10	Diözese	None	11.0	Land	
+11	Dompfarrei	None	12.0	Land	
+12	Filiale	None	13.0		
+13	Flecken	Gebietskörperschaft	14.0	Weiler	
+14	Flurname	None	15.0		
+15	Freistaat	None	16.0	Land	
+16	Gebäude	None	17.0		
+17	Gemeinde	None	18.0	Dorf	
+18	Gerichtsbezirk	None	19.0		
+19	Grafschaft	None	20.0	Land	
+20	Gut	Gebäude	21.0		
+21	Herrschaft	None	22.0	Land	
+22	Herzogtum	None	23.0	Land	
+23	Hof	None	24.0		
+24	Kanton	None	25.0	Land	
+25	Kirche	None	26.0		
+26	Kirchenkreis	None	27.0	Land	
+27	Kirchenprovinz	None	28.0		
+28	Kirchspiel	None	29.0		
+29	Kloster	Gebäude	30.0		
+30	Königreich	None	31.0	Land	
+31	Kreis	None	32.0	Land	
+32	Kurfürstentum	None	33.0	Land	
+33	Land	None	34.0	Land	
+34	Landeskirche	None	35.0	Land	
+35	Landkreis	None	36.0	Land	
+36	Oberamt	None	37.0	Land	
+37	Oblast	None	38.0	Land	
+38	Ort	None	39.0		
+39	Ortsteil	None	40.0	Dorf	
+40	Pfarr-Rektorat	None	41.0		
+41	Pfarrei	None	42.0	Land	
+42	Pfarrkuratie	None	43.0		
+43	Pfarrverband	None	44.0	Land	
+44	Provinz	None	45.0	Land	
+45	Regierungsbezirk	None	46.0	Land	
+46	Landschaft	Region	47.0	Land	
+47	Samtgemeinde	None	48.0		
+48	Sprengel	None	49.0	Dorf	
+49	Staat	None	50.0	Land	
+50	Stadt	Siedlung	51.0	Stadt	
+51	Stadtbezirk	None	52.0	Stadt	
+52	Stadtkreis	None	53.0	Stadt	
+53	Stadtteil	None	54.0	Stadt	
+54	Dorf	None	55.0	Dorf	
+55	Republik	None	56.0	Land	
+56	Amt	dänisches	57.0	Land	
+57	Unionsrepublik	None	58.0	Land	
+58	Wojewodschaft	None	59.0	Land	
+59	Fürstentum	None	60.0	Land	
+60	Großherzogtum	None	61.0	Land	
+61	Markgrafschaft	None	62.0	Land	
+62	Rayon	None	63.0	Land	
+63	Vorwerk	None	64.0	Einöde	
+64	Pfarrdorf	None	65.0	Dorf	
+65	Kirchdorf	None	66.0	Dorf	
+66	Einöde	None	67.0	Einöde	
+67	Hauptort	None	68.0	Stadt	
+68	Weiler	None	69.0	Weiler	
+69	Vogtei	None	70.0	Land	
+70	Staatenbund	None	71.0	Land	
+71	Volksrepublik	None	72.0	Land	
+72	Landdrostei	None	73.0		
+73	veraltet	Gut	74.0		
+74	Güterdistrikt	None	75.0		
+75	Adeliges Gut	None	76.0		
+76	Reichskreis	None	77.0	Land	
+77	Amt	kreisähnlich	78.0		
+78	Harde	None	79.0		
+79	Landschaft	Verwaltung	80.0		
+80	Kloster	Gebiet	81.0		
+81	Domkapitel	Herrschaft	82.0		
+82	Hansestadt	None	83.0	Stadt	
+83	Kirchspielvogtei	None	84.0		
+84	Landgemeinde	None	85.0	Land	
+85	Teilprovinz	None	86.0	Land	
+86	Mühle	None	87.0		
+87	Judet	None	88.0		
+88	Friedhof	None	89.0		
+89	Wüstung	None	90.0		
+90	Bistumsregion	None	91.0		
+91	Kirchengemeinde	None	92.0	Dorf	
+92	Reichsstadt	None	93.0	Stadt	
+93	Verwaltungsgemeinschaft	None	94.0		
+94	Kreisfreie Stadt	None	95.0	Stadt	
+95	Erzbistum	None	96.0	Land	
+96	Bürgermeisterei	None	97.0		
+97	veraltet	Amtsgericht Gebäude	98.0		
+98	Amtshauptmannschaft	None	99.0		
+99	Kreishauptmannschaft	None	100.0		
+100	Kreisdirektion	None	101.0		
+101	Forsthaus	None	102.0		
+102	Standesamt	None	103.0		
+103	veraltet	Standesamt (Gebäude)	104.0		
+104	Landgericht	None	105.0		
+105	Insel		107.0		
+106	Gutsbezirk		108.0		
+107	Forstgutsbezirk		109.0		
+108	Bezirksamt		110.0		
+109	Schloss		111.0		
+110	Gespanschaft		112.0		
+111	Komitat		113.0		
+112	Vest		114.0		
+113	Försterei		115.0		
+114	Oberförsterei		116.0		
+115	Unterförsterei		117.0		
+116	Bahnhof		118.0		
+117	Haltestelle		119.0		
+118	Siedlung		120.0	Dorf	
+119	Kolonie		121.0	Dorf	
+120	Verbandsgemeinde		122.0		
+121	Abtei		124.0		
+122	Reichsabtei		125.0		
+123	Syssel		126.0		
+124	Verwaltungsverband		127.0		
+125	Landgrafschaft		128.0		
+126	Wohnplatz		129.0	Einöde	
+127	Bundesstaat		130.0		
+128	Weichbild		131.0		
+129	Region (französisch)		133.0		
+130	arrondissement		134.0		
+131	canton		135.0		
+132	commune		136.0		
+133	Region (Gebietskörperschaft)		137.0		
+134	Oberlandratsbezirk		138.0		
+135	Einschicht		139.0		
+136	Einheitsgemeinde		140.0		
+137	Reichsgau		142.0		
+138	kommune		143.0	Dorf	
+139	Ortschaft		144.0	Dorf	
+140	Markt		145.0	Dorf	
+141	Bezirkshauptmannschaft/Politischer Bezirk		146.0		
+142	veraltet (Politischer Bezirk)		147.0		
+143	Erfüllende Gemeinde		148.0		
+144	Landratsamt		149.0		
+145	Stadt (Gebietskörperschaft)		150.0	Stadt	
+146	Oberlandesgericht		151.0		
+147	Landbürgermeisterei		152.0		
+148	Kommissariat		153.0		
+149	Honschaft		154.0		
+150	Region (katholische Kirche)		155.0		
+151	Gemeindebezirk		156.0		
+152	Gouvernement		157.0		
+153	Gemeindeteil		158.0		
+154	Chutor		159.0	Einöde	
+155	Sowjetrepublik		160.0		
+156	Verwaltungsbezirk		161.0		
+157	Stadt- und Landgemeinde		162.0		
+158	Ortsgemeinde		163.0	Dorf	
+159	Ortsbezirk		164.0		
+160	Gnotschaft		165.0		
+161	Ruine		166.0		
+162	Mandatsgebiet		167.0		
+163	Provinz (schwedisch)		168.0		
+164	Gemeinde (schwedisch)		169.0	Dorf	
+165	Distrikt		170.0		
+166	Stadthauptmannschaft		171.0		
+167	Katastralgemeinde		172.0		
+168	Reichskommissariat		173.0		
+169	Generalbezirk		174.0		
+170	Kreisgebiet		175.0		
+171	Protektorat		176.0		
+172	Reichsritterschaft		177.0		
+173	Ritterkanton		178.0		
+174	Ritterkreis		179.0		
+175	Marktgemeinde		180.0	Dorf	
+176	Rotte		181.0	Einöde	
+177	Erzstift		182.0		
+178	Hochstift		183.0		
+179	Kammerschreiberei		184.0		
+180	Klosteramt		185.0		
+181	Rentkammer		186.0		
+182	zu überprüfen		187.0		
+183	Ritterorden		188.0		
+184	Großpriorat		189.0		
+185	Ballei		190.0		
+186	Kommende		191.0		
+187	Besatzungszone		192.0		
+188	Alm		193.0		
+189	Distrikts-Amt		194.0		
+190	veraltet (Bundessozialgericht)		195.0		
+191	veraltet (Landessozialgericht)		196.0		
+192	veraltet (Sozialgericht)		197.0		
+193	veraltet (früher: Bundesverwaltungsgericht)		198.0		
+194	veraltet (früher: Landesverwaltungsgericht)		199.0		
+195	veraltet (früher: Verwaltungsgericht)		200.0		
+196	Landeskommissarbezirk		201.0		
+197	Amtsgerichtsbezirk		202.0		
+198	Domanialamt		203.0		
+199	Ritterschaftliches Amt		204.0		
+200	Dorfrat		205.0		
+201	Regionalkirchenamt		206.0		
+202	Oberamtsbezirk		207.0		
+203	Kirchenbund		210.0		
+204	Landgebiet		211.0		
+205	Landherrenschaft		212.0		
+206	Stadtrat		213.0		
+207	Kaiserreich		214.0		
+208	Reichshälfte		215.0		
+209	Landesteil		216.0		
+210	Direktionsbezirk		217.0		
+211	Stadt (Einheitsgemeinde)		218.0	Stadt	
+212	Expositur		219.0		
+213	Fylke		221.0	Stadt	
+214	Kreis (mittlere Verwaltungsebene)		222.0		
+215	Landgericht (älterer Ordnung)		223.0		
+216	Pfleggericht		224.0		
+217	Rentamt (älterer Ordnung)		225.0		
+218	Obmannschaft		226.0		
+219	Kirchspielslandgemeinde		227.0		
+220	Gerichtsamt		228.0		
+221	Häusergruppe		229.0		
+222	Streusiedlung		230.0		
+223	Höfe		231.0		
+224	Randort		232.0		
+225	Flecken (Siedlung)		233.0		
+226	Borough		234.0		
+227	Unitary Authority		235.0		
+228	Häuser		236.0		
+229	Siedlungsrat		237.0		
+230	Siedlung städtischen Typs		238.0		
+231	Verwaltungsamt		239.0		
+232	Ujesd		240.0		
+233	Wolost		241.0		
+234	Katasteramt		242.0		
+235	Propstei		243.0		
+236	Nebenkirche		244.0		
+237	Kapelle		245.0		
+238	Gromada		246.0		
+239	Ortsteil (Verwaltung)		247.0		
+240	Schulzenamt		248.0		
+241	Erzbischöfliches Amt		249.0		
+242	Apostolische Administratur		250.0		
+243	autonome Gemeinschaft		251.0		
+244	local government		252.0		
+245	Religionsgemeinschaft		253.0		
+246	Okrug		254.0		
+247	Stadtgut		255.0		
+248	Landesbezirk		256.0		
+249	Landgemeinde PL		257.0	Dorf	
+250	Stadtgemeinde (PL)		258.0	Stadt	
+251	Landvogteibezirk		259.0		
+252	Delegaturbezirk		260.0		
+253	Hofschaft		261.0		
+254	Stadtteil (Verwaltung)		262.0		
+			PPLC	Grossstadt	
+			PPLA	Stadt	seat of a first-order administrative division (PPLC takes precedence over PPLA)
+			PPLA2	Stadt	
+			PPLA3	Stadt	
+			PPLA4	Stadt	
+			PPLCH	Stadt	
+			PPLF	Einöde	
+			PPLG	Stadt	
+			PPLH		
+			PPLL	Weiler	
+			PPLQ	abandoned populated place	
+			PPLR	Dorf	
+			PPLS		
+			PPLW		
+			STLMT	Dorf	
+			Stadt	Stadt	
+			Dorf	Dorf	
+			Einöde	Einöde	
+			Weiler	Weiler	
+			Großstadt	Grossstadt	
+			city	Stadt	
+			town	Stadt	
+			village	Dorf	
+			isolated_dwelling	Einöde	
+			16	Stadt	
+			18	Dorf	
+			hamlet	Weiler	
+			suburb	Stadt	
+			Große Stadt	Große Stadt	
+			Mittlere Stadt	Mittlere Stadt	
