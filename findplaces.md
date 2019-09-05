@@ -34,6 +34,7 @@ This column contains information on a number of "hits" from your source. It may 
 
 You do nit need to rename the columns. Your column names are assigned by a config file:
 To buld an opject corectly, you need to write a config file first. An example can be found in this folder under config.json.
+### Config-File:
 The config file is practicly a python dictionary with the following variables:
 #### "problempaare": 
 problempaare specifies pairs of letters, which may be changed in modern spellings. A typical example for German might be th to t for example. If the script does not find a match, and the name does consists of such letters, they are changed to their modern correspondent. This is also submitted as a dictionary. Thus, following the above mentiond example, a dictionary for th-t would be: {th:t}.
