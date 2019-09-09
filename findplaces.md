@@ -13,7 +13,16 @@ from findplaces import placelocator
 
 ## Step 2
 
-load your list of place names. It is important, that the following columns are included:
+load your list of place names. 
+
+```
+datei = 'place_sample.csv'
+dfplaces = pd.read_csv(datei,  header=0, index_col=0 , sep='\t', decimal=',')
+ 
+```
+
+
+It is important, that the following columns are included (see places_sample.csv and config.json as examples in this repository):
 ### Original Name
 This column represants the original name of the places, you are loking for
 
@@ -74,3 +83,19 @@ this specifies additional search layers. This could be interesting, If you want 
 if you have additional neighbourhoods and you want to have some of them be used with a lower threshhold, put those neighbourhoods here.
 #### "folderregions": 
 specifies the places of the sub-dbs.
+
+## Step 3
+Load the regional context shape files. Note that you can combine more than one if needed. 
+Geo_region specifies a region (or point), which should be used as a reference, if more then one places are plausible.
+```
+regions = gpd.read_file('GERMANEMPIRE.shp')
+geo_region = gpd.read_file('GERMANEMPIRE.shp')
+placelocator(dfplaces, regions,geo_region, 'config.json')
+```
+The algorithm will start right away with the georesolution. After processing all lines, 3 csvs are produced:
+### results.csv
+Here, the hits are stored.
+### multis.csv
+In this file, places are stored with mor then one plausible hit.
+### noresults.csv
+This file is for plaqcenames with no results.
