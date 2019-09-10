@@ -18,11 +18,27 @@ from joblib import Parallel, delayed
 import gensim
 import os
 import metaphone
+import json
+import nltk
+nltk.download('stopwords')
 countrycode ={'A':'AT','B':'BE','CH':'CH','CZ':'CZ','D':'DE','ES':'ES','F':'FR','H':'HU', 'N':'NO','NL':'NL','PL':'PL','RUS':'RU','S':'SE','USA':'US','Azerbaijan':'AZ','Bulgaria':'BG','Georgia':'GE','Kazakhstan':'KZ','Moldova':'MD','Romainia':'RO','Russia':'RU','Ukraine':'UA'}
-stopwort = open('german_stopwords_lite.txt','r')
-stopw=[]
-govneu=True
+from nltk.corpus import stopwords
+stopw=set(stopwords.words('german'))
 
+with open('config.json', 'r') as fi:
+    jsonconfig = json.load(fi)
+
+osmfile=jsonconfig['osmfile']
+wikifile = jsonconfig['wikifile']
+geonamesfile = jsonconfig['geonamesfile']
+govfile = jsonconfig['govfile']
+rusgerfile = jsonconfig['rusgerfile']
+includeosm=jsonconfig['includeosm']
+includewiki=jsonconfig['includewiki']
+includegeonames=jsonconfig['includegeonames']
+includerusger=jsonconfig['includerusger']
+includegov=jsonconfig['includegov']
+filegeonamesalt=jsonconfig['filegeonamesalt']
 
 def reduce_mem_usage(props):
     start_mem_usg = props.memory_usage().sum() / 1024 ** 2
@@ -89,9 +105,7 @@ def reduce_mem_usage(props):
     print("Memory usage is: ", mem_usg, " MB")
     print("This is ", 100 * mem_usg / start_mem_usg, "% of the initial size")
     return props
-for line in stopwort:
-    line = line.replace('\n', '')
-    stopw.append(line)
+
 def lettermass(word):
     abc=list(string.ascii_lowercase)
     out=0
@@ -143,179 +157,108 @@ def minlen(word):
                 out=length
     return out
 
-#Einlesen der Liste der Wikidata Ortschaften
-datei='osm-data.csv'
-osm = pd.read_csv(datei , sep='\t',index_col=0)
-osm.ldName=osm.name.str.lower()
-aachendf=osm[osm.name=='aachen']
-print(aachendf)
-#print(osm)
-osm.rename(columns={'alternative_names':'altname'},inplace=True)
-osm.reset_index()
-print(len(osm))
-osm2=osm.dropna(axis=0,subset=['altname'])
-
-print(len(osm2))
-osm2.reset_index()
-# for line in osm2.itertuples():
-#     print(line.altname)
-#     for ortsname in line.altname.split(','):
-#         print(line.name,len(osm),ortsname)
-#         neu=osm.index.max() +1
-#         osm.loc[neu, :] = line
-#         osm.set_value(neu, 'itemLabel', ortsname)
-#         osm.set_value(neu, 'altname', np.nan)
-#         #print(osm.loc[neu,:])
-osm3 = osm2.altname.str.split(',', expand=True).stack().str.strip().reset_index(level=1, drop=True)
-
-#osm2.dropna(axis=0, subset=['name'],inplace=True)
-osm3= pd.concat([osm2, osm3], axis=1)
-osm3.rename( columns={0:'name'},inplace=True)
-osm3.columns=[       'namealt',      'altname',     'osm_type',       'osm_id',
-              'class',         'type',          'lon',          'lat',
-         'place_rank',   'importance',       'street',         'city',
-             'county',        'state',      'country', 'country_code',
-       'display_name',         'west',        'south',         'east',
-              'north',     'wikidata',    'wikipedia', 'housenumbers',
-                    'name']
-
-osm_all= pd.concat([osm, osm3], axis=0,   ignore_index=True)
-osm.dropna(axis=0, subset=['altname'], inplace=True)
-print(osm.columns)
+#Reading of OSM-Place-Names
 pd.set_option('display.expand_frame_repr', False)
 pd.set_option('display.max_columns', 500)
-print(osm_all[osm_all.name=='Berlin'])
-print(len(osm),len(osm3),len(osm_all))
-print(osm_all.columns)
-osm_all['place_rank'].replace({16:'city',18:'village',30:'city'},inplace=True)
-osm_all['type'].replace({'administrative':np.nan},inplace=True)
-print(osm_all.groupby(['type']).count())
-osm_all['type'].fillna(osm_all['place_rank'],inplace=True)
-osm_all.drop(['place_rank','city','class','country','county','display_name','east', 'housenumbers', 'importance','namealt', 'north','south',
-       'state', 'street', 'west', 'wikidata', 'wikipedia','osm_type'],inplace=True, axis=1)
-osm_all.rename(columns = {'osm_id':'ID','altname':'aktueller Name','name':'ldName','country_code':'Staat','lon':'longitude','lat':'latitude','type':'ObjekttypNr'}, inplace = True)
-osm_all['Herkunft']='3OSM'
-print(osm_all.columns)
-print(osm_all[osm_all['aktueller Name']=='Berlin'])
-osm_all.to_csv('osm_all.csv', sep='\t')
+if includeosm:
+    osm = pd.read_csv(osmfile, error_bad_lines=False, sep='\t', dtype={'place_rank': float, 'lat': float, 'lon': float})
+    osm.dropna(axis=0, subset=['name'], inplace=True)
+    osm = osm[((osm['class'] == 'place') | (osm['class'] == 'multiple') | (osm['class'] == 'boundary')) & (
+    osm['place_rank'].isin([16.0, 18.0, 20.0, 8, 30]))]
+    osm = osm[~osm['type'].isin(['continent', 'island', 'ocean', 'sea', 'locality'])]
+    osm.ldName=osm.name.str.lower()
+    osm.rename(columns={'alternative_names':'altname'},inplace=True)
+    osm.reset_index()
+    osm2=osm.dropna(axis=0,subset=['altname'])
+    osm2.reset_index()
+    osm3 = osm2.altname.str.split(',', expand=True).stack().str.strip().reset_index(level=1, drop=True)
+    osm3= pd.concat([osm2, osm3], axis=1)
+    osm3.rename( columns={0:'name'},inplace=True)
+    osm3.columns=[       'namealt',      'altname',     'osm_type',       'osm_id',
+                  'class',         'type',          'lon',          'lat',
+             'place_rank',   'importance',       'street',         'city',
+                 'county',        'state',      'country', 'country_code',
+           'display_name',         'west',        'south',         'east',
+                  'north',     'wikidata',    'wikipedia', 'housenumbers',
+                        'name']
 
+    osm_all= pd.concat([osm, osm3], axis=0,   ignore_index=True)
+    osm.dropna(axis=0, subset=['altname'], inplace=True)
+    osm_all['place_rank'].replace({16:'city',18:'village',30:'city'},inplace=True)
+    osm_all['type'].replace({'administrative':np.nan},inplace=True)
+    osm_all['type'].fillna(osm_all['place_rank'],inplace=True)
+    osm_all.drop(['place_rank','city','class','country','county','display_name','east', 'housenumbers', 'importance','namealt', 'north','south',
+           'state', 'street', 'west', 'wikidata', 'wikipedia','osm_type'],inplace=True, axis=1)
+    osm_all.rename(columns = {'osm_id':'ID','altname':'aktueller Name','name':'ldName','country_code':'Staat','lon':'longitude','lat':'latitude','type':'ObjekttypNr'}, inplace = True)
+    osm_all['Herkunft']='3OSM'
+    osm_all.to_csv('osm_all.csv', sep='\t')
 
-datei = 'wikiortetypen.p'
-print(datei)
-wikiorte=pd.read_pickle(datei)
-wikiorte.rename( columns={'coord.value':'coord','altname.value':'altname','itemLabel.value':'itemLabel','typ':'ObjekttypNr'},inplace=True)
-print(wikiorte.columns)
-#wikialt=wikiorte.dropna(axis=0, subset=['altname'])
-#print(wikialt)
-#wikialt['itemLabel']=wikialt['altname']
-#print(len(wikiorte))
-#wikiorte = pd.concat([wikialt,wikiorte],ignore_index=True)
-print(len(wikiorte))
-wikiorte['latitude']=0.1
-wikiorte['longitude']=0.1
-for zeile in wikiorte.itertuples():
-    if 'Point' in zeile.coord:
-        coords=zeile.coord.split('(')[1].split(')')[0].split(' ')
-        wikiorte.set_value(zeile[0],'longitude', float(coords[0]))
-        wikiorte.set_value(zeile[0],'latitude', float(coords[1]))
-    else:
-        print('Fehler bei:',zeile[0])
-        print(zeile)
-        wikiorte.set_value(zeile[0],'longitude', np.nan)
-        wikiorte.set_value(zeile[0],'latitude', np.nan)
-    # if str(zeile.altname) != 'nan' and (len(wikiorte[(wikiorte.itemLabel==zeile.altname)&(wikiorte.coord==zeile.coord)])>0):
-    #     neu=len(wikiorte)
-    #     wikiorte.loc[neu, :] = wikiorte.loc[zeile[0]].values
-    #     wikiorte.set_value(neu, 'itemLabel', zeile.altname)
-    #     wikiorte.set_value(neu, 'altname', np.nan)
-    #     print(len(wikiorte),'hinzugefügt aus Zeile:',zeile[0])
-        #print(wikiorte[wikiorte.index==len(wikiorte)-1])
+#Reading of Wikidata place names
+if includewiki:
+    wikiorte=pd.read_pickle(wikifile)
+    wikiorte.rename( columns={'coord.value':'coord','altname.value':'altname','itemLabel.value':'itemLabel','typ':'ObjekttypNr'},inplace=True)
+    wikiorte['latitude']=0.1
+    wikiorte['longitude']=0.1
+    for zeile in wikiorte.itertuples():
+        if 'Point' in zeile.coord:
+            coords=zeile.coord.split('(')[1].split(')')[0].split(' ')
+            wikiorte.set_value(zeile[0],'longitude', float(coords[0]))
+            wikiorte.set_value(zeile[0],'latitude', float(coords[1]))
+        else:
+            print('Fehler bei:',zeile[0])
+            print(zeile)
+            wikiorte.set_value(zeile[0],'longitude', np.nan)
+            wikiorte.set_value(zeile[0],'latitude', np.nan)
+    wikiorte.rename(columns = {'typ':'ObjekttypNr','item.value':'ID','altname':'aktueller Name','itemLabel':'ldName','kurz.value':'Staat','longitude':'longitude','latitude':'latitude'}, inplace = True)
+    wikiorte['Herkunft']='1Wiki'
+    wikiorte.drop(['coord', 'coord.datatype', 'coord.type', 'item.type','itemLabel.type',  'itemLabel.xml:lang', 'kurz.type', 'staat.type'],inplace=True, axis=1)
+    wikiorte[wikiorte['ldName'].str.lower()=='detroit'].to_csv('detroit.csv',sep='\t')
 
-#geometry = [Point(xy) for xy in zip(wikiorte.longitude, wikiorte.latitude)]
+#Reading of Russian German Place names
+if includerusger:
+    russlanddeu = pd.read_csv(rusgerfile, sep=';', header=0) #.T.to_dict()     Bisheriger_Wohnort
+    russlanddeu['currcountry'].replace(countrycode,inplace=True)
+    russlanddeu.rename(columns = {'ID':'ID','currname':'aktueller Name','Name':'ldName','currcountry':'Staat','Gebiet':'adm1','Area':'adm2','lat':'longitude','lon':'latitude'}, inplace = True)
+    russlanddeu['Herkunft']='5RuDeu'
+# Reading of Geonames Place names
+if includegeonames:
+    geonames = pd.read_csv(geonamesfile, sep='\t', names=['geonameid','name','asciiname','alternatenames','latitude','longitude','featureclass','featurecode','code','cc2','admin1code','admin2 code','admin3 code','admin4 code','population','elevation','dem','timezone','modification date' ], dtype={'geonameid':str,'alternatenames': str, 'latitude': str, 'cc2':str, 'admin1code':str,'admin2 code':str,'admin3 code':str,'admin4 code':str}) #.T.to_dict()
 
-#crs = {'init': 'epsg:4326'}
-#geo_wiki = gpd.GeoDataFrame(wikiorte, crs=crs, geometry=geometry)
-wikiorte.rename(columns = {'typ':'ObjekttypNr','item.value':'ID','altname':'aktueller Name','itemLabel':'ldName','kurz.value':'Staat','longitude':'longitude','latitude':'latitude'}, inplace = True)
-wikiorte['Herkunft']='1Wiki'
-wikiorte.drop(['coord', 'coord.datatype', 'coord.type', 'item.type','itemLabel.type',  'itemLabel.xml:lang', 'kurz.type', 'staat.type'],inplace=True, axis=1)
-wikiorte[wikiorte['ldName'].str.lower()=='detroit'].to_csv('detroit.csv',sep='\t')
-# Index(['level_0', 'altname.type', 'altname.value', 'altname.xml:lang', 'coord',
-#        'coord.datatype', 'coord.type', 'index', 'item.type', 'item.value',
-#        'itemLabel.type', 'itemLabel', 'itemLabel.xml:lang', 'kurz.type',
-#        'kurz.value', 'staat.type', 'staat.value'],
-#       dtype='object')
+    altnamen = pd.read_csv(filegeonamesalt, sep='\t', names=['alternateNameId','geonameid','isolang','alternativname','isPreferredName','isShortName','isColloquial','isHistoric'], dtype={'geonameid':str,'alternateNameId':str})
 
-#print(geo_wiki)
-#geo_wiki.plot(cmap='OrRd')
-#plt.save_fig('test.png')
-print('rudeu.csv')
-datei = 'rudeu.csv'
-russlanddeu = pd.read_csv(datei, sep=';', header=0) #.T.to_dict()     Bisheriger_Wohnort
-russlanddeu['currcountry'].replace(countrycode,inplace=True)
-russlanddeu.rename(columns = {'ID':'ID','currname':'aktueller Name','Name':'ldName','currcountry':'Staat','Gebiet':'adm1','Area':'adm2','lat':'longitude','lon':'latitude'}, inplace = True)
-russlanddeu['Herkunft']='5RuDeu'
-# Einlesen von Geonames
-datei = 'allCountries.txt'
-print(datei)
-geonames = pd.read_csv(datei, sep='\t', names=['geonameid','name','asciiname','alternatenames','latitude','longitude','featureclass','featurecode','code','cc2','admin1code','admin2 code','admin3 code','admin4 code','population','elevation','dem','timezone','modification date' ], dtype={'geonameid':str,'alternatenames': str, 'latitude': str, 'cc2':str, 'admin1code':str,'admin2 code':str,'admin3 code':str,'admin4 code':str}) #.T.to_dict()
-datei = 'alternateNames.txt'
-#Einlesen und verknüpfen der deutschen Namen in das Geonames-df
-print(datei)
-altnamen = pd.read_csv(datei, sep='\t', names=['alternateNameId','geonameid','isolang','alternativname','isPreferredName','isShortName','isColloquial','isHistoric'], dtype={'geonameid':str,'alternateNameId':str})
-#altnamen = altnamen[altnamen.isolanguage=='de']
+    altnamen = altnamen[altnamen.isolang.isin(['de','en','ru',np.nan,'es','pt','pl','cz','it','fr'])]
+    geonames2 = pd.merge(geonames, altnamen, how='left', on='geonameid')
+    geonames2.drop(['name'], inplace=True, axis=1)
+    geonames2.rename(columns={'alternativname':'name'},inplace=True)
+    geonames = pd.concat([geonames, geonames2], ignore_index=True)
+    geonames.drop_duplicates(subset=['geonameid', 'name'], keep='first', inplace=True)
 
-altnamen = altnamen[altnamen.isolang.isin(['de','en','ru',np.nan,'es','pt','pl','cz','it','fr'])]
-print('Geonames Namen einfach: ', len(geonames))
-print(altnamen.head())
-geonames2 = pd.merge(geonames, altnamen, how='left', on='geonameid')
-geonames2.drop(['name'], inplace=True, axis=1)
-geonames2.rename(columns={'alternativname':'name'},inplace=True)
-geonames = pd.concat([geonames, geonames2], ignore_index=True)
-geonames.drop_duplicates(subset=['geonameid', 'name'], keep='first', inplace=True)
-print('Geonames mit allen Namen: ', len(geonames))
-
-geonames=geonames[geonames['featureclass']=='P']
-print('Geonames nach Filterung auf Orte: ', len(geonames))
-geonames.drop(['alternatenames','featureclass','cc2','elevation','timezone','isolang','dem','modification date','alternateNameId','isPreferredName','isShortName','isColloquial','isHistoric'], inplace=True, axis=1)
-geonames.drop(['asciiname'], inplace=True, axis=1)
-geonames.rename(columns = {'geonameid':'ID','featurecode':'ObjekttypNr','alternatenames2':'aktueller Name','name':'ldName','code':'Staat','admin1code':'adm1','admin2 code':'adm2','admin3 code':'adm3','admin4 code':'adm4','latitude':'latitude','longitude':'longitude'}, inplace = True)
-geonames['Herkunft']='4Geonames'
-for ort in geonames.itertuples():
-    try:
-        if float(ort.population) >= 1000000:
-            geonames.set_value(ort[0],'ObjekttypNr','Großstadt')
-            #print('----------------------',ort[0])
-        elif float(ort.population) >= 100000:
-            #print(ort[0])
-            geonames.set_value(ort[0], 'ObjekttypNr', 'Große Stadt')
-        elif float(ort.population) >= 50000:
-            #print(ort[0])
-            geonames.set_value(ort[0], 'ObjekttypNr', 'Mittlere Stadt')
-    except:
-        pass
-geonames.to_csv('geonamesfinal.csv', sep='\t')
-gov= pd.read_csv('geonamesfinal.csv', index_col=0, sep='\t', header=0) #.T.to_dict()
-
-if govneu==False:
-    gov=pd.read_pickle('gov.p')
-    print('Govdb-Länge:',len(gov))
-    print(gov.groupby(['Herkunft']).count())
-    govalt=pd.read_pickle('gov-altname.p')
-    govalt['Herkunft'] = '2GOV'
-    gov=pd.concat([gov,govalt],ignore_index=True)
-    gov.to_csv('gov.csv',sep='\t')
-
-else:
-    #gov = pd.read_pickle('gov.p')
-    datei = 'gov-data-names_20171230_205716.txt'
-    print(datei)
-    gov = pd.read_csv(datei ,sep='\t', names=["ID","Objekttyp","ObjekttypNr","aktueller Name","ldName","Staat","adm1","adm2","adm3","adm4",'Postleitzahl',"latitude","longitude" ]) #.T.to_dict()
+    geonames=geonames[geonames['featureclass']=='P']
+    geonames.drop(['alternatenames','featureclass','cc2','elevation','timezone','isolang','dem','modification date','alternateNameId','isPreferredName','isShortName','isColloquial','isHistoric'], inplace=True, axis=1)
+    geonames.drop(['asciiname'], inplace=True, axis=1)
+    geonames.rename(columns = {'geonameid':'ID','featurecode':'ObjekttypNr','alternatenames2':'aktueller Name','name':'ldName','code':'Staat','admin1code':'adm1','admin2 code':'adm2','admin3 code':'adm3','admin4 code':'adm4','latitude':'latitude','longitude':'longitude'}, inplace = True)
+    geonames['Herkunft']='4Geonames'
+    for ort in geonames.itertuples():
+        try:
+            if float(ort.population) >= 1000000:
+                geonames.set_value(ort[0],'ObjekttypNr','Großstadt')
+                #print('----------------------',ort[0])
+            elif float(ort.population) >= 100000:
+                #print(ort[0])
+                geonames.set_value(ort[0], 'ObjekttypNr', 'Große Stadt')
+            elif float(ort.population) >= 50000:
+                #print(ort[0])
+                geonames.set_value(ort[0], 'ObjekttypNr', 'Mittlere Stadt')
+        except:
+            pass
+#Reading GOV place names
+if includegov:
+    gov = pd.read_csv(govfile ,sep='\t', names=["ID","Objekttyp","ObjekttypNr","aktueller Name","ldName","Staat","adm1","adm2","adm3","adm4",'Postleitzahl',"latitude","longitude" ]) #.T.to_dict()
     gov.drop(['Postleitzahl'], inplace=True, axis=1)
     gov['ldName'] = gov['ldName'].fillna(gov['aktueller Name'])
     gov['Staat'].replace(countrycode,inplace=True)
     gov['Herkunft']='2GOV'
-    datei = 'Ortstypen.csv'
-    print(datei)
+    datei = 'placetypes.csv'
     ortscodedb = pd.read_csv(datei, index_col=None, sep='\t', header=0, dtype={'id':str})
     #print(ortscodedb)
     ortscodedb2 = ortscodedb.dropna(axis=0, subset=['Kodierung'])
@@ -340,7 +283,7 @@ else:
        except:
           print('Fehler beim Empfangen von',row,'. Neuer Versuch in 10 Sekunden.' )
           time.sleep(5)
-          erg=getcoords(row)
+          erg=exgetcoorts(row)
        return erg
     def getcoords(row):
                 erg = []
@@ -435,24 +378,32 @@ else:
     gov = pd.concat([ergebnisse, gov], ignore_index=True)
     print('Speicher GOV')
     gov.to_pickle('gov.p')
-govalt=pd.read_pickle('gov-altname.p')
-govalt['Herkunft'] = '2GOV'
-gov=pd.concat([gov,govalt],ignore_index=True)
-gov.to_csv('gov.csv',sep='\t')
-print('Gov vor Entfernung von Nonorte',len(gov))
-gov['ObjekttypNr']=gov['ObjekttypNr'].astype(str)
-gov =gov[~gov['ObjekttypNr'].isin(nonortedf['id_ortart'])]
-print('Gov nach Entfernung von Nonorte',len(gov))
 
-placenamedb = pd.concat([geonames, gov, russlanddeu,wikiorte,osm_all], ignore_index=True)
+    gov['ObjekttypNr']=gov['ObjekttypNr'].astype(str)
+    gov =gov[~gov['ObjekttypNr'].isin(nonortedf['id_ortart'])]
+#Putting the pieces together
+pieces=[]
+if includegov:
+    pieces.append(gov)
+if includegeonames:
+    pieces.append(geonames)
+if includerusger:
+    pieces.append(russlanddeu)
+if includewiki:
+    pieces.append(wikiorte)
+if includeosm:
+    pieces.append(osm_all)
+placenamedb = pd.concat(pieces, ignore_index=True)
 placenamedb.drop([ 'adm1', 'adm2', 'adm3', 'adm4', 'art.type', 'artlabel.value',
         'namegesetzt', 'population.datatype', 'population.type', 'staat.value'],inplace=True, axis=1)
 print('alle collumns:',placenamedb.columns)
-datei = 'Ortstypen.csv'
-ortscodedb = pd.read_csv(datei, index_col=None, sep='\t', header=0, dtype={'id_ortart':str})
+datei = 'placetypes.csv'
+scodedb = pd.read_csv(datei, index_col=None, sep='\t', header=0, dtype={'id_ortart':str})
 print(ortscodedb.columns)
+placenamedb.rename(columns={'art.value':'art'},inplace=True)
 ortscodedb = ortscodedb.dropna(axis=0, subset=['Kodierung'])
 placenamedb = pd.merge(placenamedb, ortscodedb, how='left',left_on='ObjekttypNr',right_on='id_ortart')
+
 placenamedb.drop(['code_index','ortart','id_ortart','zusatz','Unnamed: 5'], axis=1, inplace=True)
 placenamedb['Kodierung']= placenamedb['Kodierung'].fillna('nan')
 placenamedb.Kodierung = placenamedb.Kodierung.astype('category')
@@ -598,8 +549,3 @@ placenamedb.drop(['Objekttyp', 'ObjekttypNr', 'aktueller Name',
 #placenamedb.drop(['aktueller Name','population','lakurz','lokurz','ldName'], axis=1, inplace=True)
 placenamedb.to_csv('placenamedb.csv', sep='\t')
 placenamedb.to_pickle('placenamedb.p')
-#placenamedb.to_file('placenamedb.bak')
-
-#placenamedb[placenamedb['neuername'].str.lower()=='neuername'].to_csv('detroit.csv',sep='\t')
-#placenamedb[placenamedb['art'].str.contains('Q133442')].groupby('ObjekttypNr').count().to_csv('placenamedb1.csv',sep='\t')
-subprocess.call("python3 make-region.py 1", shell=True)

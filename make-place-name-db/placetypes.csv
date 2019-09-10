@@ -1,5 +1,5 @@
-code	ortart	zusatz	id	Kodierung	
-0	Amt	Verwaltung	1.0		
+code_index	ortart	zusatz	id_ortart	Kodierung	
+0	Amt	None	1.0		
 1	Amtsbezirk	None	2.0		
 2	Amtsgericht	None	3.0		
 3	Bauerschaft	None	4.0	Einöde	
