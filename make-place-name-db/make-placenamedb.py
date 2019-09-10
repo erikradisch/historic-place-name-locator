@@ -547,5 +547,5 @@ placenamedb.drop(['Objekttyp', 'ObjekttypNr', 'aktueller Name',
        'art', 'latitude', 'ldName', 'longitude', 'population',
        'lakurz', 'lokurz'], axis=1, inplace=True)
 #placenamedb.drop(['aktueller Name','population','lakurz','lokurz','ldName'], axis=1, inplace=True)
-placenamedb.to_csv('placenamedb.csv', sep='\t')
-placenamedb.to_pickle('placenamedb.p')
+placenamedb.to_csv('../placenamedb.csv', sep='\t')
+placenamedb.to_pickle('../placenamedb.p')
