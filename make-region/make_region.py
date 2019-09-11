@@ -33,40 +33,40 @@ class Region_maker:
         print(laender)
         res_intersection = sjoin(self.geo_df,self.shapefiles[laender], how='inner',op='within')
         print('geoauswahl erstellt. Größe des Auswahldf:',len(res_intersection))
-        res_intersection.dropna(axis=0, subset=['NAME'], inplace=True)
-        auswahl = res_intersection.copy(deep=True)
         testlist=list(self.shapefiles[laender])
         if 'ID' in testlist:
             testlist.remove('ID')
-        print(testlist)
         testlist.remove('geometry')
-        print(list(auswahl))
-        auswahlland = auswahl.copy(deep=True)
-        auswahl.drop(testlist, axis=1, inplace=True)
         try:
-        	auswahl.drop(['index_right'], axis=1, inplace=True)
+            testlist.remove('NAME')
+        except:
+            print('No Column "NAME" in SHAPEFILE, splitting will be skipt.')
+        res_intersection.drop(testlist, axis=1, inplace=True)
+        try:
+        	res_intersection.drop(['index_right'], axis=1, inplace=True)
         except:
         	print('index_right nicht vorhanden.')
-        auswahl.reset_index
-        #print(auswahl.columns)
-        #auswahl.rename(columns = {'geometry2':'geometry'}, inplace = True)
-        #print(auswahl.columns)
-        auswahl.to_pickle(os.path.join(self.destinationfolder, laender + '.p'))
-        auswahl.to_csv(os.path.join(self.destinationfolder, str(laender).replace('/', '') + '.csv'), sep='\t', encoding='utf-8')
-        #d = dict(tuple(df.groupby('Name')))
-        for land in self.shapefiles[laender].itertuples():
-            print('zu bearbeitende region: ',land.NAME, 'Durchlauf:',land[0])
-            auswahlreg = auswahlland[auswahlland.NAME==land.NAME]
-            auswahlreg.drop(testlist, axis=1, inplace=True)
-            try:
-            	auswahlreg.drop(['index_right'], axis=1, inplace=True)
-            except:
-            	print('kein Index right zum löschen, hier.')
-            auswahlreg.reset_index
-            print(len(auswahlreg))
-            myfile2 = os.path.join(self.destinationfolder, str(land.NAME).replace('/', '') + '.p')
-            my_file=Path(myfile2)
-            if 'NAME' in auswahl.columns:
+        res_intersection.to_pickle(os.path.join(self.destinationfolder, laender + '.p'))
+        res_intersection.to_csv(os.path.join(self.destinationfolder, str(laender).replace('/', '') + '.csv'), sep='\t', encoding='utf-8')
+        print(res_intersection.columns)
+        if 'NAME' in self.shapefiles[laender].columns:
+            res_intersection.dropna(axis=0, subset=['NAME'], inplace=True)
+            res_intersection.reset_index
+            #print(auswahl.columns)
+            #auswahl.rename(columns = {'geometry2':'geometry'}, inplace = True)
+            #print(auswahl.columns)
+            #d = dict(tuple(df.groupby('Name')))
+            for land in self.shapefiles[laender].itertuples():
+                print('zu bearbeitende region: ',land.NAME, 'Durchlauf:',land[0])
+                auswahlreg = res_intersection[res_intersection.NAME==land.NAME]
+                try:
+                	auswahlreg.drop(['index_right'], axis=1, inplace=True)
+                except:
+                	print('kein Index right zum löschen, hier.')
+                auswahlreg.reset_index
+                myfile2 = os.path.join(self.destinationfolder, str(land.NAME).replace('/', '') + '.p')
+                my_file=Path(myfile2)
+                print('cols:',res_intersection.columns)
                 print(len(auswahlreg))
                 myfile2 = os.path.join(self.destinationfolder, str(land.NAME).replace('/', '') + '.p')
                 my_file=Path(myfile2)
@@ -83,14 +83,15 @@ class Region_maker:
                         auswahlreg.drop_duplicates(subset=['ID','neuername','Kodierung'],keep='first', inplace=True)
                     except:
                         print('Fehler!!',auswahlreg)
+                    res_intersection.drop(['Name'], axis=1, inplace=True)
+
                     print('Länge Auswahl nach drop_duplicates: ', len(auswahlreg))
-            if myfile.is_file():
                 auswahlreg.to_pickle(myfile2)
     def __init__(self,shapefiles,destinationfolder,placedb,num_cores):
         datei2 = os.path.join(placedb)
         self.shapefiles=shapefiles
-        self.geo_df = pd.read_pickle(os.path.join(datei2,'ortsdb2.p'))
-        ortsdb = pd.read_pickle(os.path.join(datei2,'ortsdb.p'))
+        self.geo_df = pd.read_pickle(os.path.join(datei2,'../placenamedb2.p'))
+        ortsdb = pd.read_pickle(os.path.join(datei2,'../placenamedb.p'))
         self.geo_df = self.geo_df.merge(ortsdb, on='ID', how='inner')
         self.destinationfolder=destinationfolder
 
