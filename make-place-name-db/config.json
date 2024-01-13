@@ -1,0 +1,13 @@
+{
+  "osmfile": "planet-latest_geonames-sorted.tsv",
+  "wikifile": "wikiortetypen.p",
+  "geonamesfile": "allCountries.txt",
+  "govfile": "gov-data-names_20171230_205716.txt",
+  "rusgerfile": "rudeu.csv",
+  "includeosm": true,
+  "includewiki": true,
+  "includegeonames" : true,
+  "includerusger":true,
+  "includegov":true,
+  "filegeonamesalt":"alternateNames.txt"
+}

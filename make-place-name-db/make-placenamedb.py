@@ -202,13 +202,13 @@ if includewiki:
     for zeile in wikiorte.itertuples():
         if 'Point' in zeile.coord:
             coords=zeile.coord.split('(')[1].split(')')[0].split(' ')
-            wikiorte.set_value(zeile[0],'longitude', float(coords[0]))
-            wikiorte.set_value(zeile[0],'latitude', float(coords[1]))
+            wikiorte.at[zeile[0],'longitude'] = float(coords[0])
+            wikiorte.at[zeile[0],'latitude'] = float(coords[1])
         else:
             print('Fehler bei:',zeile[0])
             print(zeile)
-            wikiorte.set_value(zeile[0],'longitude', np.nan)
-            wikiorte.set_value(zeile[0],'latitude', np.nan)
+            wikiorte.at[zeile[0],'longitude'] = np.nan
+            wikiorte.at[zeile[0],'latitude'] = np.nan
     wikiorte.rename(columns = {'typ':'ObjekttypNr','item.value':'ID','altname':'aktueller Name','itemLabel':'ldName','kurz.value':'Staat','longitude':'longitude','latitude':'latitude'}, inplace = True)
     wikiorte['Herkunft']='1Wiki'
     wikiorte.drop(['coord', 'coord.datatype', 'coord.type', 'item.type','itemLabel.type',  'itemLabel.xml:lang', 'kurz.type', 'staat.type'],inplace=True, axis=1)
@@ -241,14 +241,14 @@ if includegeonames:
     for ort in geonames.itertuples():
         try:
             if float(ort.population) >= 1000000:
-                geonames.set_value(ort[0],'ObjekttypNr','Großstadt')
+                geonames.at[ort[0],'ObjekttypNr'] = 'Großstadt'
                 #print('----------------------',ort[0])
             elif float(ort.population) >= 100000:
                 #print(ort[0])
-                geonames.set_value(ort[0], 'ObjekttypNr', 'Große Stadt')
+                geonames.at[ort[0], 'ObjekttypNr'] = 'Große Stadt'
             elif float(ort.population) >= 50000:
                 #print(ort[0])
-                geonames.set_value(ort[0], 'ObjekttypNr', 'Mittlere Stadt')
+                geonames.at[ort[0], 'ObjekttypNr'] = 'Mittlere Stadt'
         except:
             pass
 #Reading GOV place names
@@ -281,7 +281,8 @@ if includegov:
        try:
           erg=getcoords(row)
        except:
-          print('Fehler beim Empfangen von',row,'. Neuer Versuch in 10 Sekunden.' )
+
+
           time.sleep(5)
           erg=exgetcoorts(row)
        return erg
@@ -526,11 +527,11 @@ for line in placenamedb.itertuples():
                 if stop==ortsteil:
                     gef=True
             if not gef:
-                placenamedb.set_value(line[0], 'neuername', placenamedb.get_value(line[0], 'neuername') + ' ' + ortsteil)
-                placenamedb.set_value(line[0], 'neuername', placenamedb.get_value(line[0], 'neuername').strip())
+                placenamedb.at[line[0], 'neuername'] = placenamedb.get_value(line[0], 'neuername') + ' ' + ortsteil
+                placenamedb.at[line[0], 'neuername'] = placenamedb.get_value(line[0], 'neuername').strip()
     else:
-        placenamedb.set_value(line[0], 'neuername', placenamedb.get_value(line[0], 'neuername') + ' ' + dummy)
-        placenamedb.set_value(line[0], 'neuername', placenamedb.get_value(line[0], 'neuername').strip())
+        placenamedb.at[line[0], 'neuername'] = placenamedb.get_value(line[0], 'neuername') + ' ' + dummy
+        placenamedb.at[line[0], 'neuername'] = placenamedb.get_value(line[0], 'neuername').strip()
 placenamedb['neuername'] = placenamedb['neuername'].fillna(placenamedb['ldName'])
 placenamedb['neuername2']=''
 placenamedb.neuername2 = placenamedb['neuername'].map(gensim.utils.deaccent)
