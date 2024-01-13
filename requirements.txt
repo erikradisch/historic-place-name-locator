@@ -9,7 +9,7 @@ kph==0.4.1
 matplotlib~=3.3.4
 Metaphone==0.6  
 pandas~=1.2.2
-nltk==3.4.5    
+nltk==3.6.6    
 mplleaflet==0.0.5  
 
 numpy~=1.20.1
